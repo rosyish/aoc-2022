@@ -1,5 +1,5 @@
 fun main() {
-    fun findCommonElementInCompartments(str : String): Char {
+    fun findCommonElementInCompartments(str: String): Char {
         val firstHalf = str.substring(0 until str.length / 2).toSet()
         val secondHalf = str.substring(str.length / 2 until str.length).toSet()
         val common = firstHalf.intersect(secondHalf)
@@ -9,9 +9,9 @@ fun main() {
         return common.first()
     }
 
-    fun getElementPriority(ch : Char): Int {
+    fun getElementPriority(ch: Char): Int {
         return when (ch) {
-            in 'a' .. 'z' -> 1 + (ch -'a')
+            in 'a'..'z' -> 1 + (ch - 'a')
             in 'A'..'Z' -> 27 + (ch - 'A')
             else -> throw IllegalArgumentException("Character not a letter")
         }
