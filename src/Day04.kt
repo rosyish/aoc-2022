@@ -7,24 +7,18 @@ fun overlaps(x: IntRange, y: IntRange): Boolean {
 }
 
 fun main() {
-    fun fullyContain(str: String) {
-        // TODO: Implement without regex
-    }
-
-    fun doRangeCheck(str: String, rangeCheck: (IntRange, IntRange) -> Boolean): Boolean {
-        val values = Regex("(\\d+)-(\\d+),(\\d+)-(\\d+)")
+    fun mapToRanges(str : String) : List<IntRange> {
+        return Regex("(\\d+)-(\\d+),(\\d+)-(\\d+)")
             .matchEntire(str)!!
             .groupValues
             .drop(1)
-            .map { it.toInt() }
-        val range1 = IntRange(values[0], values[1])
-        val range2 = IntRange(values[2], values[3])
-        return rangeCheck(range1, range2)
+            .chunked(2)
+            .map { (start, end) -> start.toInt().rangeTo(end.toInt()) }
     }
 
-    val input = readInput("Day04_input")
-    val part1Result =  input.count { doRangeCheck(it, ::fullyContains) }
-    val part2Result = input.count { doRangeCheck(it, ::overlaps) }
+    val input = readInput("Day04_input").map(::mapToRanges)
+    val part1Result =  input.count { fullyContains(it[0], it[1]) }
+    val part2Result = input.count { overlaps(it[0], it[1]) }
     println(part1Result)
     println(part2Result)
 }
