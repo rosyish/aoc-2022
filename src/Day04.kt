@@ -6,16 +6,16 @@ fun overlaps(x: IntRange, y: IntRange): Boolean {
     return x.intersect(y).isNotEmpty()
 }
 
-val efficientFullyContains = fun(x: IntRange, y: IntRange): Boolean {
+fun efficientFullyContains(x: IntRange, y: IntRange): Boolean {
     return (x.first <= y.first && x.last >= y.last) || (y.first <= x.first && y.last >= x.last)
 }
 
-val efficientOverlaps = fun(x: IntRange, y: IntRange): Boolean {
+fun efficientOverlaps(x: IntRange, y: IntRange): Boolean {
     return x.contains(y.first) || y.contains(x.first)
 }
 
 fun main() {
-    fun mapToRanges(str : String) : List<IntRange> {
+    fun mapToRangesUseRegexCaptures(str : String) : List<IntRange> {
         return Regex("(\\d+)-(\\d+),(\\d+)-(\\d+)")
             .matchEntire(str)!!
             .groupValues
@@ -24,7 +24,12 @@ fun main() {
             .map { (start, end) -> start.toInt().rangeTo(end.toInt()) }
     }
 
-    val input = readInput("Day04_input").map(::mapToRanges)
+    fun mapToRanges(str: String): List<IntRange> {
+        return str.split(",")
+            .map { interval -> interval.split("-").let { it[0].toInt().rangeTo(it[1].toInt()) } }
+    }
+
+    val input = readInput("Day04_input").map { mapToRanges(it) }
     val part1Result =  input.count { efficientFullyContains(it[0], it[1]) }
     val part2Result = input.count { efficientOverlaps(it[0], it[1]) }
     println(part1Result)
