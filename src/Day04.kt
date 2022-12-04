@@ -1,20 +1,19 @@
 fun fullyContains(x: IntRange, y: IntRange): Boolean {
-    return x.all { y.contains(it) } || y.all { x.contains(it) }
+    return (x.first <= y.first && x.last >= y.last) || (y.first <= x.first && y.last >= x.last)
+
+    // alternative below inefficient
+    // return x.all { y.contains(it) } || y.all { x.contains(it) }
 }
 
 fun overlaps(x: IntRange, y: IntRange): Boolean {
-    return x.intersect(y).isNotEmpty()
-}
-
-fun efficientFullyContains(x: IntRange, y: IntRange): Boolean {
-    return (x.first <= y.first && x.last >= y.last) || (y.first <= x.first && y.last >= x.last)
-}
-
-fun efficientOverlaps(x: IntRange, y: IntRange): Boolean {
     return x.contains(y.first) || y.contains(x.first)
+
+    // alternative below inefficient
+    // return x.intersect(y).isNotEmpty()
 }
 
 fun main() {
+    // Alternative mapToRanges
     fun mapToRangesUseRegexCaptures(str : String) : List<IntRange> {
         return Regex("(\\d+)-(\\d+),(\\d+)-(\\d+)")
             .matchEntire(str)!!
@@ -33,11 +32,11 @@ fun main() {
     val part1Result =
         input
             .map { mapToRanges(it) }
-            .count { (range1, range2) -> efficientFullyContains(range1, range2) }
+            .count { (range1, range2) -> fullyContains(range1, range2) }
     val part2Result =
         input
             .map { mapToRanges(it) }
-            .count { (range1, range2) -> efficientOverlaps(range1, range2) }
+            .count { (range1, range2) -> overlaps(range1, range2) }
     println(part1Result)
     println(part2Result)
 }
