@@ -14,8 +14,18 @@ fun main() {
 //
 //    println(anotherBoxedA === boxedA)
 
-    val i = 1
-    val x = if (i < 10) i else throw IOException("error")
-    println("${x}")
+//    val i = 1
+//    val x = if (i < 10) i else throw IOException("error")
+//    println("${x}")
+
+//      val x = fun (x: Int) {
+//          println("hello world $x")
+//      }
+//      x(5)
+
+    val s = "abc"
+    println(s as? Int)    // null
+    println(s as Int?)    // exception
+
 
 }
