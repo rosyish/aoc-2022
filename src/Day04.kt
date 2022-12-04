@@ -31,10 +31,12 @@ fun main() {
     val input = readInput("Day04_input")
     val part1Result =
         input
+            .asSequence()
             .map { mapToRanges(it) }
             .count { (range1, range2) -> fullyContains(range1, range2) }
     val part2Result =
         input
+            .asSequence()
             .map { mapToRanges(it) }
             .count { (range1, range2) -> overlaps(range1, range2) }
     println(part1Result)
