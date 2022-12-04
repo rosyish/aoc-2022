@@ -1,3 +1,11 @@
+fun fullyContains(x: IntRange, y: IntRange): Boolean {
+    return x.all { y.contains(it) } || y.all { x.contains(it) }
+}
+
+fun overlaps(x: IntRange, y: IntRange): Boolean {
+    return x.intersect(y).isNotEmpty()
+}
+
 fun main() {
     fun fullyContain(str: String) {
         // TODO: Implement without regex
@@ -14,27 +22,9 @@ fun main() {
         return rangeCheck(range1, range2)
     }
 
-    // TODO: How to define this function at the top level and directly pass into method without creating val?
-    val fullyContains = fun(x: IntRange, y: IntRange): Boolean {
-        return (x.first <= y.first && x.last >= y.last) || (y.first <= x.first && y.last >= x.last)
-    }
-
-    val part1Result =
-        readInput("Day04_input")
-            .filter { doRangeCheck(it, fullyContains) }
-            .count()
-
-    val overlaps = fun(x: IntRange, y: IntRange): Boolean {
-        return fullyContains(x, y)
-                || (x.first >= y.first && x.first <= y.last)
-                || (x.last >= y.first && x.last <= y.last)
-    }
-
-    val part2Result =
-        readInput("Day04_input")
-            .filter { doRangeCheck(it, overlaps) }
-            .count()
-
+    val input = readInput("Day04_input")
+    val part1Result =  input.count { doRangeCheck(it, ::fullyContains) }
+    val part2Result = input.count { doRangeCheck(it, ::overlaps) }
     println(part1Result)
     println(part2Result)
 }

@@ -27,5 +27,7 @@ fun main() {
     println(s as? Int)    // null
     println(s as Int?)    // exception
 
+    val x = 5
+
 
 }
