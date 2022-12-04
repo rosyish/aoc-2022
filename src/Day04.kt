@@ -3,7 +3,7 @@ fun main() {
         // TODO: Implement without regex
     }
 
-    fun fullyContainUseRegexCaptures(str: String, rangeCheck: (IntRange, IntRange) -> Boolean): Boolean {
+    fun doRangeCheck(str: String, rangeCheck: (IntRange, IntRange) -> Boolean): Boolean {
         val values = Regex("(\\d+)-(\\d+),(\\d+)-(\\d+)")
             .matchEntire(str)!!
             .groupValues
@@ -21,7 +21,7 @@ fun main() {
 
     val part1Result =
         readInput("Day04_input")
-            .filter { fullyContainUseRegexCaptures(it, fullyContains) }
+            .filter { doRangeCheck(it, fullyContains) }
             .count()
 
     val overlaps = fun(x: IntRange, y: IntRange): Boolean {
@@ -32,7 +32,7 @@ fun main() {
 
     val part2Result =
         readInput("Day04_input")
-            .filter { fullyContainUseRegexCaptures(it, overlaps) }
+            .filter { doRangeCheck(it, overlaps) }
             .count()
 
     println(part1Result)
