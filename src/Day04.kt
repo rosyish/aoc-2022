@@ -29,9 +29,15 @@ fun main() {
             .map { interval -> interval.split("-").let { it[0].toInt().rangeTo(it[1].toInt()) } }
     }
 
-    val input = readInput("Day04_input").map { mapToRanges(it) }
-    val part1Result =  input.count { efficientFullyContains(it[0], it[1]) }
-    val part2Result = input.count { efficientOverlaps(it[0], it[1]) }
+    val input = readInput("Day04_input")
+    val part1Result =
+        input
+            .map { mapToRanges(it) }
+            .count { (range1, range2) -> efficientFullyContains(range1, range2) }
+    val part2Result =
+        input
+            .map { mapToRanges(it) }
+            .count { (range1, range2) -> efficientOverlaps(range1, range2) }
     println(part1Result)
     println(part2Result)
 }
