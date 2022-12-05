@@ -1,4 +1,6 @@
 import java.io.IOException
+import kotlin.random.Random
+import kotlin.reflect.typeOf
 
 fun main() {
 //    val input = readln().toInt()
@@ -23,11 +25,39 @@ fun main() {
 //      }
 //      x(5)
 
-    val s = "abc"
-    println(s as? Int)    // null
-    println(s as Int?)    // exception
+//    val s = "abc"
+//    println(s as? Int)    // null
+//    println(s as Int?)    // exception
 
-    val x = 5
+//    val foo1: Int = run {
+//        println("Calculating the answer...")
+//        42
+//    }
 
+    val a = A()
+    a.display()
 
+}
+
+class A {
+    private lateinit var prop: String
+
+    fun setUp() {
+        prop = "value"
+    }
+
+    fun display() {
+        val p = this::prop
+        if (!this::prop.isInitialized) setUp()
+        println(p)
+        println(prop)
+    }
+}
+
+class Person {
+    val age: Int
+        get() {
+            println("val is read-only but not immutable")
+            return Random.nextInt()
+        }
 }
