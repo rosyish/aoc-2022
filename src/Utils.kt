@@ -4,7 +4,7 @@ import java.security.MessageDigest
 
 
 /**
- * Reads lines from the given input txt file.
+ * Reads the first from the given input txt file.
  */
 fun readFirst(name: String) = File("src", "$name.txt")
     .readLines()[0]
