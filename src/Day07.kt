@@ -33,7 +33,7 @@ fun main() {
         when {
             it == "$ cd .." -> pwd = pwd.parent ?: pwd
             it == "$ ls" -> return@forEach
-            it.startsWith("""$ cd""") ->
+            it.startsWith("$ cd") ->
                 pwd = pwd.children[it.split(" ")[2]]!!
             it.startsWith("dir") -> {
                 val dirname = it.split(" ")[1]
