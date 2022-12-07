@@ -1,4 +1,4 @@
-data class Node(val name: String, var size: Int, val isDir: Boolean, val children: MutableList<Node>, val parent: Node?)
+class Node(val name: String, val parent: Node?, val isDir: Boolean = false, var size: Int = 0, val children: HashMap<String, Node> = hashMapOf())
 
 val part1MaxVal = 100000
 var part1answer = 0
@@ -7,7 +7,7 @@ var minDirSize = Int.MAX_VALUE
 fun fillSizes(current: Node) {
     if (!current.isDir) return;
     if (current.children.isEmpty()) return;
-    for (c in current.children) {
+    for (c in current.children.values) {
         fillSizes(c);
         current.size += c.size
     }
@@ -21,35 +21,27 @@ fun findSmallerDirWithRequiredSpace(current: Node, spaceToFreeUp: Int) {
             minDirSize = current.size
         }
     }
-    for (c in current.children) {
+    for (c in current.children.values) {
         findSmallerDirWithRequiredSpace(c, spaceToFreeUp)
     }
 }
 
 fun main() {
-    val root = Node("/", 0, true, mutableListOf(), null)
+    val root = Node("/", null,true)
     var pwd = root
     readInput("Day07_input").drop(1).forEach {
         when {
             it == "$ cd .." -> pwd = pwd.parent ?: pwd
             it == "$ ls" -> return@forEach
             it.startsWith("""$ cd""") ->
-                pwd = pwd.children.find { child -> child.name == it.split(" ")[2] }!!
+                pwd = pwd.children[it.split(" ")[2]]!!
             it.startsWith("dir") -> {
                 val dirname = it.split(" ")[1]
-                if (pwd.children.none { child -> child.name == dirname }) pwd.children.add(
-                    Node(
-                        dirname,
-                        0,
-                        true,
-                        mutableListOf(),
-                        pwd
-                    )
-                )
+                pwd.children.putIfAbsent(dirname, Node(dirname, pwd, isDir = true))
             }
             else -> {
                 val (fileSize, fileName) = it.split(" ").let { Pair(it[0].toInt(), it[1]) }
-                pwd.children.add(Node(fileName, fileSize, false, mutableListOf(), pwd))
+                pwd.children.putIfAbsent(fileName, Node(fileName, pwd, isDir = false, size = fileSize))
             }
         }
     }
