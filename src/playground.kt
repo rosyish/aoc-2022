@@ -34,8 +34,8 @@ fun main() {
 //        42
 //    }
 
-    val a = A()
-    a.display()
+    val a = "\$cd a"
+    println(a.startsWith("\$cd"))
 
 }
 
