@@ -1,18 +1,19 @@
 import kotlin.math.max
 
-data class Score(var left: Int, var right: Int, var up: Int, var down: Int) {
+private data class Score(var left: Int, var right: Int, var up: Int, var down: Int) {
     override fun toString() = "$left, $right, $up, $down"
 }
 
 fun main() {
-    val input = readInput("Day08_input").map { IntArray(it.length) { i -> it[i] - '0'} }.toTypedArray()
-    val rows = input.size
-    val cols = input[0].size
+    val lines = readInput("Day08_input")
+    val rows = lines.size
+    val cols = lines[0].length
+    val input = Array(rows) { i -> Array(cols) { j -> lines[i][j] - '0'} }
     val scores = Array(rows) { Array(cols) { Score(0,0,0,0) } }
 
     for (i in 0 until rows) {
         for (j in 0 until cols) {
-            scores[i][j].left = j-0
+            scores[i][j].left = j - 0
             scores[i][j].right = cols - 1 - j
             scores[i][j].up = i - 0
             scores[i][j].down = rows - 1 - i

@@ -2,8 +2,8 @@ fun main() {
     val lines = readInput("Day08_input")
     val rows = lines.size
     val cols = lines[0].length
-    val input = Array(rows ) { i -> Array(cols) { j -> lines[i][j] - '0' } }
-    val visible = Array(rows) { BooleanArray(cols) }
+    val input = Array(rows) { i -> Array(cols) { j -> lines[i][j] - '0' } }
+    val visible = Array(rows) { Array(cols) { 1 } }
 
     val outerBounds = listOf(0 until rows, 0 until rows, 0 until cols, 0 until cols)
     val innerBounds = listOf(0 until cols, cols-1 downTo 0 , 0 until rows, rows - 1 downTo 0)
@@ -14,23 +14,24 @@ fun main() {
         val inner = it.first.second
         val rowFirst = it.second
         for (i in outer) {
-            var maxSoFar = -1
+            val stack : ArrayDeque<Pair<Int, Int>> = ArrayDeque(0)
             for (j in inner) {
                 val r = if (rowFirst) i else j
                 var c = if (rowFirst) j else i
-                if (input[r][c] > maxSoFar) {
-                    maxSoFar = input[r][c]
-                    visible[r][c] = true
+                var popped = 0
+                while (stack.isNotEmpty() && stack.last().first < input[r][c]) {
+                    popped += 1 + stack.last().second
+                    stack.removeLast()
                 }
+                if (stack.isNotEmpty()) {
+                    visible[r][c] *= (popped + 1)
+                } else {
+                    visible[r][c] *= popped
+                }
+                stack.add(Pair(input[r][c], popped))
             }
         }
     }
 
-    var count = 0;
-    for (i in 0 until rows) {
-        for (j in 0 until cols) {
-            if (visible[i][j]) count++
-        }
-    }
-    println(count)
+    println(visible.flatten().max())
 }
