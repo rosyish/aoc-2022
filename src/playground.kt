@@ -41,12 +41,16 @@ fun main() {
 
 class A {
     private lateinit var prop: String
+    val abc: Any
+        get() = "blah"
 
     fun setUp() {
         prop = "value"
     }
 
     fun display() {
+        val xyz = abc
+        if (xyz is String)  xyz.length
         val p = this::prop
         if (!this::prop.isInitialized) setUp()
         println(p)
