@@ -34,8 +34,15 @@ fun main() {
 //        42
 //    }
 
-    val a = "\$cd a"
-    println(a.startsWith("\$cd"))
+//    var a = listOf(1,2,3)
+//    val b = a
+//
+//    a+=5
+//    println(a)
+//    println(b)
+
+    
+
 
 }
 
