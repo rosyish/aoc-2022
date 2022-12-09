@@ -41,7 +41,8 @@ fun main() {
 //    println(a)
 //    println(b)
 
-    
+    println(listOf(1,2,3).zipWithNext())
+
 
 
 }
