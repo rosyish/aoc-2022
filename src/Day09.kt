@@ -18,7 +18,6 @@ private data class Point(var x: Int, var y: Int) {
 }
 
 fun main() {
-    val input = readInput("Day09_input")
     val knotsSize = 2
     val knots = buildList { for (i in 1..knotsSize) add(Point(0,0)) }
 
@@ -27,6 +26,7 @@ fun main() {
     val visited: MutableSet<Point> = mutableSetOf()
     visited.add(Point(0, 0).copy())
 
+    val input = readInput("Day09_input")
     input.map { it.split(" ").let { l -> Pair(l[0], l[1].toInt()) } }.forEach { it ->
         val direction = it.first
         val steps = it.second
