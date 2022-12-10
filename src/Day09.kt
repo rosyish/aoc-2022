@@ -21,13 +21,13 @@ fun main() {
     val knotsSize = 2
     val knots = buildList { for (i in 1..knotsSize) add(Point(0,0)) }
 
-    // Having a set with data class of var types is a bad idea. To workaround this,
-    // I am doing point.copy() before inserting
+    // Having a set with data class of var types is a bad idea.
+    // This illustrates the problem: https://pl.kotl.in/q-ixDhSD6.
     val visited: MutableSet<Point> = mutableSetOf()
     visited.add(Point(0, 0).copy())
 
     val input = readInput("Day09_input")
-    input.map { it.split(" ").let { l -> Pair(l[0], l[1].toInt()) } }.forEach { it ->
+    input.map { it.split(" ").let { l -> Pair(l[0], l[1].toInt()) } }.forEach {
         val direction = it.first
         val steps = it.second
         for (i in 1..steps) {
