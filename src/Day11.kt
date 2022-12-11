@@ -2,13 +2,13 @@ private class Monkey(
     val items: MutableList<Item>,
     val divisor: Int,
     val operation: (Int, Int, Int) -> Int,
-    val leftOperandMods: Item?,
-    val rightOperandMods: Item?,
+    val leftOperand: Item?,
+    val rightOperand: Item?,
     val successMonkey: Int,
     val failureMonkey: Int
 ) {
     override fun toString(): String {
-        return "$items, $divisor, $leftOperandMods, $rightOperandMods, $successMonkey, $failureMonkey"
+        return "$items, $divisor, $leftOperand, $rightOperand, $successMonkey, $failureMonkey"
     }
 }
 
@@ -53,8 +53,8 @@ fun main() {
             .toMutableList()
         val divisor = it[3].substringAfter("by ").trim().toInt()
         val (left, op, right) = it[2].substringAfter("= ").split(" ")
-        val success = it[4].substringAfter("monkey ").trim().toInt()
-        val failure = it[5].substringAfter("monkey ").trim().toInt()
+        val successMonkey = it[4].substringAfter("monkey ").trim().toInt()
+        val failureMonkey = it[5].substringAfter("monkey ").trim().toInt()
 
         monkeys += Monkey(
             items,
@@ -62,8 +62,8 @@ fun main() {
             if (op == "+") ::addition else ::multiply,
             if (left == "old") null else Item.createItem(left),
             if (right == "old") null else Item.createItem(right),
-            success,
-            failure
+            successMonkey,
+            failureMonkey
         )
     }
 
@@ -73,8 +73,8 @@ fun main() {
             val m = monkey.value
             inspectionCount[monkey.index] += m.items.size
             for (item in m.items) {
-                val left = m.leftOperandMods ?: item
-                val right = m.rightOperandMods ?: item
+                val left = m.leftOperand ?: item
+                val right = m.rightOperand ?: item
                 // val worry = m.operation(left, right) / 3
                 val worry =
                     left.mods.zip(right.mods).withIndex()
