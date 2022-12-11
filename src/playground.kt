@@ -41,9 +41,29 @@ fun main() {
 //    println(a)
 //    println(b)
 
-    println(listOf(1,2,3).zipWithNext())
+//    println(listOf(1,2,3).zipWithNext())
 
+//    val seq = generateSequence(0) {
+//      //println(it)
+//      println("generating current=$it")
+//      it + 1
+//    }
+//    println(seq.take(2).toList())
+//    println(seq.take(3).toList())
 
+//      val fibonacci = sequence {
+//          var a = 1
+//          var b = 1
+//          yield(a)
+//          yield(b)
+//          while (true) {
+//              val c = a+b
+//              yield(c)
+//              a=b
+//              b=c
+//          }
+//      }
+//      println(fibonacci.take(5).toList())
 
 }
 

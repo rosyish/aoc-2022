@@ -27,9 +27,8 @@ fun main() {
 
         // Read next instruction if we are done processing the last instruction
         if (nextReadyCycle == cycle) {
-            val instruction = input[instructionIndex++]
-            when {
-                instruction == "noop" -> {
+            when (val instruction = input[instructionIndex++]) {
+                "noop" -> {
                     nextReadyCycle = cycle + 1
                 }
                 else -> {
