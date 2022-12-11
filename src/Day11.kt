@@ -1,7 +1,17 @@
+private interface Item {
+    fun isDivisible(divisor: Int): Boolean
+}
+
+private interface ItemCompanion {
+    fun createItem(s: String): Item
+    fun add(one: Item, two: Item): Item
+    fun multiply(one: Item, two: Item): Item
+}
+
 private class Monkey(
     val items: MutableList<Item>,
     val divisor: Int,
-    val operation: (Int, Int, Int) -> Int,
+    val operation: (Item, Item) -> Item,
     val leftOperand: Item?,
     val rightOperand: Item?,
     val successMonkey: Int,
@@ -12,83 +22,123 @@ private class Monkey(
     }
 }
 
-private data class Item(val mods : List<Int>) {
-    companion object {
-        fun createItem(s : String) : Item {
+private data class ItemWithMods(val mods: List<Int>) : Item {
+    override fun isDivisible(divisor: Int): Boolean {
+        return mods[divisor] == 0
+    }
+
+    companion object : ItemCompanion {
+        override fun createItem(s: String): Item {
             val v = s.trim().toInt()
-            return Item(generateAllMods(v))
+            return ItemWithMods(generateAllMods(v))
         }
 
         fun generateAllMods(value: Int): List<Int> {
-            var another = mutableListOf<Int>()
-            // Special case 0 so it is easy to deal with later in the code
-            // Max divisor is 17 in the input file
-            for (k in 0..20) {
-                if (k == 0) another.add(0) else another += (value % k)
-            }
-            return another.toList()
+            return (0..20).map { if (it > 0) value % it else 0 }.toList()
+        }
+
+        override fun add(one: Item, two: Item): Item {
+            one as ItemWithMods
+            two as ItemWithMods
+            return one.mods.zip(two.mods).withIndex()
+                .map { p -> if (p.index == 0) 0 else (p.value.first + p.value.second) % p.index }
+                .let { mods -> ItemWithMods(mods) }
+        }
+
+        override fun multiply(one: Item, two: Item): Item {
+            one as ItemWithMods
+            two as ItemWithMods
+            return one.mods.zip(two.mods).withIndex()
+                .map { p -> if (p.index == 0) 0 else (p.value.first * p.value.second) % p.index }
+                .let { mods -> ItemWithMods(mods) }
         }
     }
 }
 
-// TODO: This only supports part2 at the moment. Refactor to also support part1
-fun main() {
-    val input = readInput("Day11_input")
-    val rounds = 10000
-
-    fun addition(a: Int, b: Int, divisor: Int): Int {
-        if (divisor == 0) return 0
-        return ((a % divisor) + (b % divisor)) % divisor
+private data class SimpleItem(val value: Int) : Item {
+    override fun isDivisible(divisor: Int): Boolean {
+        return value % divisor == 0
     }
 
-    fun multiply(a: Int, b: Int, divisor: Int): Int {
-        if (divisor == 0) return 0
-        return ((a % divisor) * (b % divisor)) % divisor
-    }
+    companion object : ItemCompanion {
+        override fun createItem(s: String): Item {
+            val v = s.trim().toInt()
+            return SimpleItem(v)
+        }
 
-    val monkeys = mutableListOf<Monkey>()
-    input.chunked(7).forEach {
-        val items = it[1].substringAfter(": ").split(",")
-            .map { str -> Item.createItem(str) }
-            .toMutableList()
-        val divisor = it[3].substringAfter("by ").trim().toInt()
-        val (left, op, right) = it[2].substringAfter("= ").split(" ")
-        val successMonkey = it[4].substringAfter("monkey ").trim().toInt()
-        val failureMonkey = it[5].substringAfter("monkey ").trim().toInt()
+        override fun add(one: Item, two: Item): Item {
+            one as SimpleItem
+            two as SimpleItem
+            return SimpleItem((one.value + two.value) / 3)
+        }
 
-        monkeys += Monkey(
-            items,
-            divisor,
-            if (op == "+") ::addition else ::multiply,
-            if (left == "old") null else Item.createItem(left),
-            if (right == "old") null else Item.createItem(right),
-            successMonkey,
-            failureMonkey
-        )
-    }
-
-    val inspectionCount = Array(monkeys.size) { 0 }
-    repeat(rounds) {
-        for (monkey in monkeys.withIndex()) {
-            val m = monkey.value
-            inspectionCount[monkey.index] += m.items.size
-            for (item in m.items) {
-                val left = m.leftOperand ?: item
-                val right = m.rightOperand ?: item
-                // val worry = m.operation(left, right) / 3
-                val worry =
-                    left.mods.zip(right.mods).withIndex()
-                        .map { p -> m.operation(p.value.first, p.value.second, p.index) }
-                        .let { mods -> Item(mods) }
-                if (worry.mods[m.divisor] == 0) {
-                    monkeys[m.successMonkey].items += worry
-                } else {
-                    monkeys[m.failureMonkey].items += worry
-                }
-            }
-            m.items.clear()
+        override fun multiply(one: Item, two: Item): Item {
+            one as SimpleItem
+            two as SimpleItem
+            return SimpleItem((one.value * two.value) / 3)
         }
     }
-    val sortedList = inspectionCount.toList().sortedDescending()
-    println(1L * sortedList[0] * sortedList[1])
+}
+
+fun main() {
+    fun solve(rounds: Int, monkeys: List<Monkey>): Long {
+        val inspectionCount = Array(monkeys.size) { 0 }
+        repeat(rounds) {
+            for (monkey in monkeys.withIndex()) {
+                val m = monkey.value
+                inspectionCount[monkey.index] += m.items.size
+                for (item in m.items) {
+                    val left = m.leftOperand ?: item
+                    val right = m.rightOperand ?: item
+                    val worry = m.operation(left, right)
+                    if (worry.isDivisible(m.divisor)) {
+                        monkeys[m.successMonkey].items += worry
+                    } else {
+                        monkeys[m.failureMonkey].items += worry
+                    }
+                }
+                m.items.clear()
+            }
+        }
+        val sortedList = inspectionCount.toList().sortedDescending()
+        return 1L * sortedList[0] * sortedList[1]
+    }
+
+    fun initMonkeys(input: List<String>, itemCompanion: ItemCompanion): List<Monkey> {
+        val monkeys = mutableListOf<Monkey>()
+        input.chunked(7).forEach {
+            val items = it[1].substringAfter(": ").split(",")
+                .map { str -> itemCompanion.createItem(str) }
+                .toMutableList()
+            val divisor = it[3].substringAfter("by ").trim().toInt()
+            val (left, op, right) = it[2].substringAfter("= ").split(" ")
+            val successMonkey = it[4].substringAfter("monkey ").trim().toInt()
+            val failureMonkey = it[5].substringAfter("monkey ").trim().toInt()
+
+            monkeys += Monkey(
+                items,
+                divisor,
+                if (op == "+") itemCompanion::add else itemCompanion::multiply,
+                if (left == "old") null else itemCompanion.createItem(left),
+                if (right == "old") null else itemCompanion.createItem(right),
+                successMonkey,
+                failureMonkey
+            )
+        }
+        return monkeys
+    }
+
+    fun solvePart1(input: List<String>) {
+        val rounds = 20
+        println(solve(rounds, initMonkeys(input, SimpleItem.Companion)))
+    }
+
+    fun solvePart2(input: List<String>) {
+        val rounds = 10000
+        println(solve(rounds, initMonkeys(input, ItemWithMods.Companion)))
+    }
+
+    val input = readInput("Day11_input")
+    solvePart1(input)
+    solvePart2(input)
 }
