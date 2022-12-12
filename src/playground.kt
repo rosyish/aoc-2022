@@ -64,7 +64,10 @@ fun main() {
 //          }
 //      }
 //      println(fibonacci.take(5).toList())
-
+    var a  = hashSetOf<Int>()
+    var b = listOf<Int>()
+    println(a.javaClass)
+    println(b.javaClass)
 }
 
 class A {

@@ -1,5 +1,5 @@
 private interface Item {
-    fun isDivisible(divisor: Int): Boolean
+    infix fun divisibleBy(divisor: Int): Boolean
 }
 
 private interface ItemCompanion {
@@ -22,15 +22,15 @@ private class Monkey(
     }
 }
 
-private data class ItemWithMods(val mods: List<Int>) : Item {
-    override fun isDivisible(divisor: Int): Boolean {
+private data class ItemAsMods(val mods: List<Int>) : Item {
+    override fun divisibleBy(divisor: Int): Boolean {
         return mods[divisor] == 0
     }
 
     companion object : ItemCompanion {
         override fun createItem(s: String): Item {
             val v = s.trim().toInt()
-            return ItemWithMods(generateAllMods(v))
+            return ItemAsMods(generateAllMods(v))
         }
 
         fun generateAllMods(value: Int): List<Int> {
@@ -38,25 +38,25 @@ private data class ItemWithMods(val mods: List<Int>) : Item {
         }
 
         override fun add(one: Item, two: Item): Item {
-            one as ItemWithMods
-            two as ItemWithMods
+            one as ItemAsMods
+            two as ItemAsMods
             return one.mods.zip(two.mods).withIndex()
                 .map { p -> if (p.index == 0) 0 else (p.value.first + p.value.second) % p.index }
-                .let { mods -> ItemWithMods(mods) }
+                .let { mods -> ItemAsMods(mods) }
         }
 
         override fun multiply(one: Item, two: Item): Item {
-            one as ItemWithMods
-            two as ItemWithMods
+            one as ItemAsMods
+            two as ItemAsMods
             return one.mods.zip(two.mods).withIndex()
                 .map { p -> if (p.index == 0) 0 else (p.value.first * p.value.second) % p.index }
-                .let { mods -> ItemWithMods(mods) }
+                .let { mods -> ItemAsMods(mods) }
         }
     }
 }
 
 private data class SimpleItem(val value: Int) : Item {
-    override fun isDivisible(divisor: Int): Boolean {
+    override infix fun divisibleBy(divisor: Int): Boolean {
         return value % divisor == 0
     }
 
@@ -91,7 +91,7 @@ fun main() {
                     val left = m.leftOperand ?: item
                     val right = m.rightOperand ?: item
                     val worry = m.operation(left, right)
-                    if (worry.isDivisible(m.divisor)) {
+                    if (worry divisibleBy m.divisor) {
                         monkeys[m.successMonkey].items += worry
                     } else {
                         monkeys[m.failureMonkey].items += worry
@@ -135,7 +135,7 @@ fun main() {
 
     fun solvePart2(input: List<String>) {
         val rounds = 10000
-        println(solve(rounds, initMonkeys(input, ItemWithMods.Companion)))
+        println(solve(rounds, initMonkeys(input, ItemAsMods.Companion)))
     }
 
     val input = readInput("Day11_input")
