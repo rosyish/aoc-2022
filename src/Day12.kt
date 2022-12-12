@@ -1,5 +1,3 @@
-import java.util.PriorityQueue
-
 private data class Cell(val x: Int, val y: Int, val elevation: Char, val steps: Int)
 
 fun main() {
@@ -12,8 +10,7 @@ fun main() {
     }
 
     fun solve(input: List<String>, isStartingCell: (Char) -> Boolean) {
-        val comparator = Comparator<Cell> { one, two -> one.steps - two.steps }
-        val queue: PriorityQueue<Cell> = PriorityQueue(comparator)
+        val queue: ArrayDeque<Cell> = ArrayDeque()
         input.forEachIndexed { x, str ->
             str.forEachIndexed { y, ch ->
                 if (isStartingCell(ch)) {
@@ -25,7 +22,7 @@ fun main() {
         val visited: MutableSet<Pair<Int, Int>> = mutableSetOf()
         val next = listOf(Pair(0, 1), Pair(1, 0), Pair(0, -1), Pair(-1, 0))
         while (queue.isNotEmpty()) {
-            val current: Cell = queue.remove()
+            val current: Cell = queue.removeFirst()
             if (Pair(current.x, current.y) in visited) continue
             for ((dx, dy) in next) {
                 val (neighborX, neighborY) = Pair(current.x + dx, current.y + dy)
