@@ -1,5 +1,4 @@
 private data class Cell(val x: Int, val y: Int, val elevation: Char, val steps: Int)
-
 fun main() {
     fun elevation(input: Char): Char {
         return when (input) {
@@ -10,7 +9,7 @@ fun main() {
     }
 
     fun solve(input: List<String>, isStartingCell: (Char) -> Boolean) {
-        val queue: ArrayDeque<Cell> = ArrayDeque()
+        val queue = ArrayDeque<Cell>()
         input.forEachIndexed { x, str ->
             str.forEachIndexed { y, ch ->
                 if (isStartingCell(ch)) {
@@ -26,7 +25,7 @@ fun main() {
             if (Pair(current.x, current.y) in visited) continue
             for ((dx, dy) in next) {
                 val (neighborX, neighborY) = Pair(current.x + dx, current.y + dy)
-                if (neighborX in input.indices && neighborY in 0 until input[0].length) {
+                if (neighborX in input.indices && neighborY in input[0].indices) {
                     val neighborElevation = elevation(input[neighborX][neighborY])
                     if (neighborElevation - current.elevation <= 1) {
                         queue.add(Cell(neighborX, neighborY, neighborElevation, current.steps + 1))
