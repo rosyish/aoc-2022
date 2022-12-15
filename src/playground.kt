@@ -64,10 +64,22 @@ fun main() {
 //          }
 //      }
 //      println(fibonacci.take(5).toList())
-    var a  = hashSetOf<Int>()
-    var b = listOf<Int>()
-    println(a.javaClass)
-    println(b.javaClass)
+//    var a  = hashSetOf<Int>()
+//    var b = listOf<Int>()
+//    println(a.javaClass)
+//    println(b.javaClass)
+
+    val x : ArrayDeque<List<Any>> = ArrayDeque()
+    x.add(listOf(listOf(2, "hello"), 3))
+    for (y in x) {
+        y.forEach {
+            if (it is List<Any?>) {
+                println(it[1])
+            } else if (it is Int) {
+                println(it)
+            }
+        }
+    }
 }
 
 class A {
@@ -87,10 +99,11 @@ class A {
         println(p)
         println(prop)
     }
+
 }
 
 class Person {
-    val age: Int
+    val age: Int?
         get() {
             println("val is read-only but not immutable")
             return Random.nextInt()
