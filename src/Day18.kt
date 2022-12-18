@@ -4,7 +4,7 @@ fun main() {
     val cubes = readInput("Day18_input").map {
         val (x, y, z) = it.split(",").map { it.toInt() }
         Triple(x, y, z)
-    }.toList()
+    }.toSet()
     val minDim = cubes.flatMap { it.toList() }.min()
     val maxDim = cubes.flatMap { it.toList() }.max()
 
