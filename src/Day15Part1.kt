@@ -55,7 +55,6 @@ class Day15Part1 {
             return Pair(position.first - dx, position.first + dx)
         }
     }
-
 }
 
 fun main() {

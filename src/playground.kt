@@ -69,18 +69,22 @@ fun main() {
 //    println(a.javaClass)
 //    println(b.javaClass)
 
-    val x : ArrayDeque<List<Any>> = ArrayDeque()
-    x.add(listOf(listOf(2, "hello"), 3))
-    for (y in x) {
-        y.forEach {
-            if (it is List<Any?>) {
-                println(it[1])
-            } else if (it is Int) {
-                println(it)
-            }
-        }
-    }
+//    val x : ArrayDeque<List<Any>> = ArrayDeque()
+//    x.add(listOf(listOf(2, "hello"), 3))
+//    for (y in x) {
+//        y.forEach {
+//            if (it is List<Any?>) {
+//                println(it[1])
+//            } else if (it is Int) {
+//                println(it)
+//            }
+//        }
+//    }
+
+    val x = 16
+    println(1 shl 2)
 }
+
 
 class A {
     private lateinit var prop: String
