@@ -1,31 +1,31 @@
 import kotlin.math.abs
 
 fun main() {
-    fun adjacent(a: Triple<Int, Int, Int>, b: Triple<Int, Int, Int>): Boolean {
-        val dx = abs(a.first - b.first)
-        val dy = abs(a.second - b.second)
-        val dz = abs(a.third - b.third)
-        return (dx+dy+dz) == 1
-    }
-
-    val input = readInput("Day18_input")
-    val cubes = mutableListOf<Triple<Int, Int, Int>>()
-
-    input.map {
+    val cubes = readInput("Day18_input").map {
         val (x, y, z) = it.split(",").map { it.toInt() }
-        cubes.add(Triple(x, y, z))
+        Triple(x, y, z)
+    }.toList()
+    val minDim = cubes.flatMap { it.toList() }.min()
+    val maxDim = cubes.flatMap { it.toList() }.max()
+
+    fun Triple<Int, Int, Int>.getAdjacent(): List<Triple<Int, Int, Int>> {
+        return listOf(
+            Triple(0, 0, 1),
+            Triple(0, 0, -1),
+            Triple(0, 1, 0),
+            Triple(0, -1, 0),
+            Triple(-1, 0, 0),
+            Triple(1, 0, 0))
+        .map { Triple(it.first + this.first, it.second + this.second, it.third + this.third) }
+        .toList()
     }
-    val minDim = cubes.flatMap { listOf(it.first, it.second, it.third) }.min()
-    val maxDim = cubes.flatMap { listOf(it.first, it.second, it.third) }.max()
 
     // Part 1
     var adj = 0
-    for (i in 0 until cubes.size) {
-        for (j in 0 until cubes.size) {
-            if (i != j) {
-                if(adjacent(cubes[i], cubes[j])) {
-                    adj++
-                }
+    for (cube in cubes) {
+        for (adjCube in cube.getAdjacent()) {
+            if (cubes.contains(adjCube)) {
+                adj++
             }
         }
     }
@@ -33,46 +33,37 @@ fun main() {
 
     // Part 2
     fun outsideBounds(cube: Triple<Int, Int, Int>): Boolean {
-        return cube.toList().firstOrNull { it < minDim - 1 || it > maxDim + 1} != null
+        return cube.toList().firstOrNull { it < minDim - 1 || it > maxDim + 1 } != null
     }
 
     val visited = mutableSetOf<Triple<Int, Int, Int>>()
     fun bfs(startCube: Triple<Int, Int, Int>) {
-        val queue = ArrayDeque<Triple<Int,Int, Int>>()
+        val queue = ArrayDeque<Triple<Int, Int, Int>>()
         queue.add(startCube)
         while (queue.isNotEmpty()) {
             val airCube = queue.removeFirst()
-            if (outsideBounds(airCube)) {
-                continue
-            }
             if (visited.contains(airCube)) {
                 continue
             }
-            if (cubes.contains(airCube)) {
-                continue
-            }
             visited.add(airCube)
-            for (dx in -1..1) {
-                for (dy in -1..1) {
-                    for (dz in -1..1) {
-                        val newAirCube =
-                            Triple(airCube.first + dx, airCube.second + dy, airCube.third + dz)
-                        if (adjacent(airCube, newAirCube) && !visited.contains(newAirCube)) {
-                            queue += newAirCube
-                        }
-                    }
+            for (newAirCube in airCube.getAdjacent()) {
+                if (!cubes.contains(newAirCube)
+                    && !visited.contains(newAirCube)
+                    && !outsideBounds(newAirCube)
+                ) {
+                    queue += newAirCube
                 }
             }
         }
     }
 
-    // DFS stack overflows, so do BFS
+    // recursion stack overflows, so do BFS
     bfs(Triple(minDim - 1, minDim - 1, minDim - 1))
 
     var result = 0
     for (cube in cubes) {
-        for (air in visited) {
-            if (adjacent(cube, air)) result++
+        for (adjCube in cube.getAdjacent()) {
+            if (visited.contains(adjCube)) result++
         }
     }
     println(result)
