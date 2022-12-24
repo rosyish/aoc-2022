@@ -81,8 +81,7 @@ fun main() {
 //        }
 //    }
 
-    val x = 16
-    println(1 shl 2)
+    println(-2 % 4)
 }
 
 
